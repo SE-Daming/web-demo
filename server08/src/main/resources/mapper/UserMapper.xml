@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ideu.demo.server08.mapper.UserMapper">
+    <update id="update2">
+        update users
+        <set>
+            <if test="address != null and address != ''">
+                address = #{address},
+            </if>
+            <if test="balance != null">
+                balance = #{balance},
+            </if>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="password != null">
+                password = #{password},
+            </if>
+            <if test="phone != null">
+                phone = #{phone},
+            </if>
+            <if test="region != null">
+                region = #{region},
+            </if>
+            <if test="role != null">
+                role = #{role},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <update id="updateBalance">
+        update users set balance = balance + #{balance} where id = #{userId}
+    </update>
+    <delete id="deleteByUA">
+        delete from users
+        where username=#{userName}
+    </delete>
+
+
+    <select id="getBalance" resultType="java.math.BigDecimal">
+        select balance from users where id = #{userId}
+    </select>
+
+    <select id="pageQuery" resultType="com.ideu.demo.server08.entity.User">
+        select * from users
+        <where>
+            <if test ="userName != null and userName != ''">
+                and username like concat(#{userName}, '%')
+            </if>
+            <if test ="phone != null and phone != ''">
+                and phone like concat(#{phone}, '%')
+            </if>
+            <if test ="region != null and region != ''">
+                and region like concat('%', #{region}, '%')
+            </if>
+        </where>
+    </select>
+</mapper>

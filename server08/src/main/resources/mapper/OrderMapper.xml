@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ideu.demo.server08.mapper.OrderMapper">
+    <update id="receiveOrder">
+        UPDATE orders
+        SET order_status = '1',assigned_engineer = #{engId},updated_time = now()
+        WHERE id = #{orderId}
+
+    </update>
+    <update id="finishOrder">
+        UPDATE orders
+        SET order_status = '2',completion_time = now(),updated_time = now()
+        WHERE id = #{orderId}
+    </update>
+    <delete id="cancel">
+        update orders
+        SET order_status = '3',updated_time = now()
+        WHERE id = #{id}
+    </delete>
+
+
+    <select id="pageQuery">
+        SELECT *
+        FROM orders
+        <where>
+            <if test="id != null">
+                AND id like CONCAT(#{id}, '%')
+            </if>
+            <if test="contactPhone != null and contactPhone != ''">
+                AND contact_phone like CONCAT(#{contactPhone}, '%')
+            </if>
+            <if test="beginTime != null">
+                AND created_time &gt;= #{beginTime}
+            </if>
+            <if test="endTime != null">
+                AND created_time &lt;= #{endTime}
+            </if>
+        <if test="flag!=null">
+            AND order_status = '0'
+            AND area like CONCAT('%',#{region}, '%')
+        </if>
+        </where>
+        order by created_time desc
+        limit #{pageNum}, #{pageSize}
+    </select>
+    <select id="getTime" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM orders
+        <where>
+            <if test="time != null">
+                AND date(created_time)=#{time}
+            </if>
+        </where>
+    </select>
+    <select id="getByRegion">
+        SELECT *
+        FROM orders
+        <where>
+            <if test="flag!=null">
+                AND order_status = '0'
+                AND area like CONCAT('%',#{region}, '%')
+            </if>
+        </where>
+    </select>
+
+
+</mapper>
